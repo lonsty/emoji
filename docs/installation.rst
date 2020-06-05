@@ -12,7 +12,7 @@ To install emoji, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install emoji
+    $ pip install emoji2
 
 This is the preferred method to install emoji, as it will always install the most recent stable release.
 

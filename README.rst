@@ -1,5 +1,5 @@
 =====
-emoji
+emoji2
 =====
 
 
@@ -16,7 +16,7 @@ emoji
 
 
 
-Search emoji quickly.
+Search emoji by keywords in terminal.
 
 
 * Free software: MIT license

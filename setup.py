@@ -31,7 +31,7 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
     ],
-    description="Search emoji quickly.",
+    description="Search emoji by keywords in terminal.",
     entry_points={
         'console_scripts': [
             'emoji=emoji.cli:main',
