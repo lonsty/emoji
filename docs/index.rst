@@ -1,4 +1,4 @@
-Welcome to emoji's documentation!
+Welcome to emoji2's documentation!
 ======================================
 
 .. toctree::

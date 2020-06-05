@@ -46,7 +46,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'emoji'
+project = 'emoji2'
 copyright = "2020, Allen Shaw"
 author = "Allen Shaw"
 

@@ -2,11 +2,11 @@
 Usage
 =====
 
-To search emoji about `sun` in a terminal:
+# To search emoji about `sun` in a terminal:
 
 .. code-block:: console
 
-    $   emoji sun
+    $ emoji sun
 
     ⛅ 	 Sun Behind Cloud
     🌞 	 Sun with Face
@@ -28,3 +28,15 @@ To search emoji about `sun` in a terminal:
     🔆 	 Bright Button
     😎 	 Smiling Face with Sunglasses
     🌑 	 New Mooni
+
+
+# Add emoji to a git commit message:
+
+.. code-block:: console
+
+    $ git commit -m "`emoji bug -f` fix a bug when the day is sunday"
+
+    [master e867e1e] 🐛 fix a bug when the day is sunday
+     1 file changed, 1 insertion(+)
+
+`emoji bug -f` get the first emoji by searching *bug*.
