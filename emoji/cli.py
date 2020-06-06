@@ -23,10 +23,6 @@ def main(keywords, all_emoji, shortcodes, index, limit):
                 emoji = search_emoji_limited(keywords=keywords,
                                              limit=limit)
             pretty_print(emoji)
-            # # print(f'emoji\tindex   description\tshortcodes')
-            # len_attr = lambda emoji, attr: max([len(eval(f'e.{attr}')) for e in emoji])
-            # for i, e in enumerate(emoji):
-            #     print(f'{e.emoji}\t{(e.shortcodes or "").ljust(12)}\t{("#" + str(i + 1)).rjust(5)} - {e.desc}')
         else:
             if index:
                 emoji = search_emoji_by_index(keywords=keywords,
@@ -38,8 +34,7 @@ def main(keywords, all_emoji, shortcodes, index, limit):
                                               shortcodes=shortcodes)
             print(emoji.shortcodes or emoji.emoji if shortcodes else emoji.emoji)
     except Exception as err:
-        import traceback
-        print(traceback.format_exc())
+        print(err)
 
     return 0
 

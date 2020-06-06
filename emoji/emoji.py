@@ -163,7 +163,17 @@ def get_multi_emoji_shortcodes(emoji: List[Emoji]) -> List[Emoji]:
     with ThreadPoolExecutor(max_workers=30) as executor:
         futures = {executor.submit(get_emoji_shortcodes, e): e for e in emoji}
         wait(futures)
-    return [f.result() for f in futures]
+
+    emojis = []
+    for future in futures:
+        try:
+            emj = future.result()
+        except Exception as e:
+            print(e)
+        else:
+            emojis.append(emj)
+
+    return emojis
 
 
 def maxlen(emoji: List[Emoji], attr: str) -> int:
