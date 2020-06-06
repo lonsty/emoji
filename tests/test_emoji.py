@@ -4,10 +4,10 @@
 
 
 import unittest
+
 from click.testing import CliRunner
 
-from emoji import emoji
-from emoji import cli
+from emoji import cli, emoji
 
 
 class TestEmoji(unittest.TestCase):
@@ -31,3 +31,10 @@ class TestEmoji(unittest.TestCase):
         help_result = runner.invoke(cli.main, ['--help'])
         assert help_result.exit_code == 0
         assert 'Show this message and exit.' in help_result.output
+
+    def test_searching_emoji(self):
+        """Test the searching function."""
+        runner = CliRunner()
+        result = runner.invoke(cli.main, ['bug', '-c'])
+        assert result.exit_code == 0
+        assert ":bug:" in result.output
