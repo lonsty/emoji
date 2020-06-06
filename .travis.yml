@@ -5,7 +5,6 @@ python:
   - 3.8
   - 3.7
   - 3.6
-  - 3.5
 
 # Command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install: pip install -U tox-travis
@@ -20,9 +19,9 @@ script: tox
 deploy:
   provider: pypi
   distributions: sdist bdist_wheel
-  user: lonsty
+  user: __token__
   password:
-    secure: PLEASE_REPLACE_ME
+    secure: pypi-AgEIcHlwaS5vcmcCJDVlNGU5MWVkLWM2NGQtNDdkMS05YTg3LTMwOTBiZDJjYmFlMQACJXsicGVybWlzc2lvbnMiOiAidXNlciIsICJ2ZXJzaW9uIjogMX0AAAYgRsfi7j8w_1ZE8KfwbklgIOo29Gm5Vzv9M-CrE9qvWJ4
   on:
     tags: true
     repo: lonsty/emoji
