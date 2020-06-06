@@ -1,19 +1,33 @@
 """Main module."""
 import random
+import threading
 import time
 from collections import namedtuple
+from concurrent.futures import ThreadPoolExecutor, wait
 from functools import wraps
-from typing import List, Iterable
+from typing import Iterable, List
 from urllib.parse import quote
 
 import requests
 from bs4 import BeautifulSoup
 
-HOST = 'https://emojipedia.org'
-SEARCH_API = 'https://emojipedia.org/search/?q={k}'
+SEARCH_API = 'https://emojipedia.org/search/?q={keywords}'
+EMOJI_DETAIL_API = 'https://emojipedia.org/emoji/{emoji}'
 TIMEOUT = 10
-Emoji = namedtuple('Emoji', 'emoji desc')
-NOT_FOUND = Emoji('😞', 'No results found')
+Emoji = namedtuple('Emoji', 'emoji shortcodes desc')
+NOT_FOUND = Emoji('😞', ':disappointed:', 'No results found')
+thread_local = threading.local()
+
+
+def get_session():
+    """
+    Get the same requests Session in the same thread.
+
+    :return: Session, session object.
+    """
+    if not hasattr(thread_local, "session"):
+        thread_local.session = requests.Session()
+    return thread_local.session
 
 
 def retry(exceptions, tries=3, delay=1, backoff=2, logger=None):
@@ -50,7 +64,28 @@ def retry(exceptions, tries=3, delay=1, backoff=2, logger=None):
     return deco_retry
 
 
-@retry(Exception)
+@retry(ConnectionError)
+def request_to_beautifulsoup(url: str) -> BeautifulSoup:
+    """
+    Request a url, then load it's html text to BeautifulSoup.
+
+    :param url: str, url to request.
+    :return: BeautifulSoup object.
+    """
+
+    session = get_session()
+    try:
+        response = session.get(url, timeout=TIMEOUT)
+        response.raise_for_status()
+    except Exception as e:
+        raise ConnectionError(e)
+
+    try:
+        return BeautifulSoup(response.text, 'html.parser')
+    except:
+        raise ValueError('Response html text can not be converted to a <BeautifulSoup>.')
+
+
 def search_emoji(keywords: Iterable) -> List[Emoji]:
     """
     Search emoji by keywords.
@@ -60,25 +95,17 @@ def search_emoji(keywords: Iterable) -> List[Emoji]:
     """
     assert keywords, "ValueError: keyword must be provided for search."
     keywords = quote(' '.join(keywords))
-
-    try:
-        response = requests.get(SEARCH_API.format(k=keywords), timeout=TIMEOUT)
-    except Exception:
-        raise
-
-    if response.status_code != 200:
-        return [NOT_FOUND]
-
-    soup = BeautifulSoup(response.text, 'html.parser')
-    # emoji = [s.text for s in soup.find(class_='search-results').find_all('span')]
-    emoji = [Emoji(a.text.split(' ')[0], ' '.join(a.text.split(' ')[1:]))
+    soup = request_to_beautifulsoup(SEARCH_API.format(keywords=keywords))
+    emoji = [Emoji(emoji=a.text.split(' ')[0],
+                   desc=' '.join(a.text.split(' ')[1:]),
+                   shortcodes=None)
              for a in soup.find(class_='search-results').find_all('a')]
     if len(emoji) == 1 and emoji[0].emoji == 'random':
         return [NOT_FOUND]
     return emoji
 
 
-def search_emoji_limited(keywords: Iterable, limit: int=0) -> List[Emoji]:
+def search_emoji_limited(keywords: Iterable, limit: int = 0) -> List[Emoji]:
     """
     Get limited emoji from search result.
 
@@ -88,13 +115,15 @@ def search_emoji_limited(keywords: Iterable, limit: int=0) -> List[Emoji]:
     """
     emoji = search_emoji(keywords)
     if emoji:
-        if limit == 0:
-            return emoji
-        return emoji[:limit]
+        if limit:
+            selected_emoji = emoji[:limit]
+        else:
+            selected_emoji = emoji
+        return get_multi_emoji_shortcodes(selected_emoji)
     return [NOT_FOUND]
 
 
-def search_emoji_by_index(keywords: Iterable, index: int=1) -> Emoji:
+def search_emoji_by_index(keywords: Iterable, index: int = 1, shortcodes: bool = False) -> Emoji:
     """
     Get the first emoji from result.
 
@@ -102,6 +131,66 @@ def search_emoji_by_index(keywords: Iterable, index: int=1) -> Emoji:
     :return: a Emoji.
     """
     emoji = search_emoji(keywords)
-    if emoji:
+    if emoji and len(emoji) >= index:
+        if shortcodes:
+            return get_emoji_shortcodes(emoji[index - 1])
         return emoji[index - 1]
     return NOT_FOUND
+
+
+def get_emoji_shortcodes(emoji: Emoji) -> Emoji:
+    """
+    Get the shortcodes of a emoji if it has, by call a API.
+
+    :param emoji: Emoji, emoji object.
+    :return: A new or original emoji object.
+    """
+    soup = request_to_beautifulsoup(url=EMOJI_DETAIL_API.format(emoji=quote(emoji.emoji)))
+    row = soup.find('table', class_='emoji-detail').find('td', text='Shortcodes')
+    if row:
+        return Emoji(emoji=emoji.emoji, desc=emoji.desc,
+                     shortcodes=row.find_next_sibling().text)
+    return emoji
+
+
+def get_multi_emoji_shortcodes(emoji: List[Emoji]) -> List[Emoji]:
+    """
+    Use thread pool to get all shortcodes in once.
+
+    :param emoji: List, list of emoji object.
+    :return: List, list of processed emoji object.
+    """
+    with ThreadPoolExecutor(max_workers=30) as executor:
+        futures = {executor.submit(get_emoji_shortcodes, e): e for e in emoji}
+        wait(futures)
+    return [f.result() for f in futures]
+
+
+def maxlen(emoji: List[Emoji], attr: str) -> int:
+    """
+    Max value length of a emoji attribute.
+
+    :param emoji: list, list of Emoji.
+    :param attr: a Emoji attribute.
+    :return: max length of this attribute value.
+    """
+    return max([len(eval(f'e.{attr}') or '') for e in emoji])
+
+
+def pretty_print(emoji: List[Emoji]):
+    """
+    Print all emoji information as table.
+
+    :param emoji: List, list of emoji object.
+    :return: None
+    """
+    title = ['Index', 'Emoji', 'Shortcodes', 'Description']
+    maxlens = [len(title[0]), max(maxlen(emoji, "emoji"), len(title[1])),
+               max(maxlen(emoji, "shortcodes"), len(title[2]))]
+
+    print(f'{title[0]}  {title[1].ljust(maxlens[1])}\t{title[2].ljust(maxlens[2])}  {title[3]}')
+    for i, e in enumerate(emoji):
+        print(f'{(str(i + 1)).center(maxlens[0])}  '
+              f'{e.emoji}\t'
+              f'{(e.shortcodes or "").ljust(maxlens[2])}  '
+              f'{e.desc}')

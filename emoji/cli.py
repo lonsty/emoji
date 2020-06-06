@@ -1,33 +1,45 @@
 """Console script for emoji."""
 import sys
+
 import click
 
-from emoji.emoji import search_emoji_limited, search_emoji_by_index
+from emoji.emoji import (pretty_print, search_emoji_by_index,
+                         search_emoji_limited)
 
 
 @click.command()
-@click.option('-a', '--all', 'all_emoji', is_flag=True, help='All emoji from results.')
-@click.option('-i', '--index', default=0, help='The index th (1 is the 1st) emoji of results.')
-@click.option('-l', '--limit', default=0, help='Emoji from limited number of results.')
+@click.option('-a', '--all', 'all_emoji', is_flag=True, help='All emojis from the results.')
+@click.option('-c', '--shortcodes', is_flag=True, help='Return the emoji shortcodes instead of unicode.')
+@click.option('-i', '--index', default=0, help='The index th (1 is the 1st) emoji of the results.')
+@click.option('-l', '--limit', default=0, help='Emojis from limited number of the results.')
 @click.argument('keywords', nargs=-1)
-def main(keywords, all_emoji, index, limit):
+def main(keywords, all_emoji, shortcodes, index, limit):
     """Search emoji by keywords."""
     try:
         if all_emoji or limit:
             if all_emoji:
                 emoji = search_emoji_limited(keywords=keywords)
             else:
-                emoji = search_emoji_limited(keywords=keywords, limit=limit)
-            for i, e in enumerate(emoji):
-                print(f'{e.emoji}\t{("#" + str(i + 1)).rjust(3)} - {e.desc}')
+                emoji = search_emoji_limited(keywords=keywords,
+                                             limit=limit)
+            pretty_print(emoji)
+            # # print(f'emoji\tindex   description\tshortcodes')
+            # len_attr = lambda emoji, attr: max([len(eval(f'e.{attr}')) for e in emoji])
+            # for i, e in enumerate(emoji):
+            #     print(f'{e.emoji}\t{(e.shortcodes or "").ljust(12)}\t{("#" + str(i + 1)).rjust(5)} - {e.desc}')
         else:
             if index:
-                emoji = search_emoji_by_index(keywords=keywords, index=index)
+                emoji = search_emoji_by_index(keywords=keywords,
+                                              index=index,
+                                              shortcodes=shortcodes)
             else:
-                emoji = search_emoji_by_index(keywords=keywords, index=1)
-            print(emoji.emoji, end='\n')
+                emoji = search_emoji_by_index(keywords=keywords,
+                                              index=1,
+                                              shortcodes=shortcodes)
+            print(emoji.shortcodes or emoji.emoji if shortcodes else emoji.emoji)
     except Exception as err:
-        print(err)
+        import traceback
+        print(traceback.format_exc())
 
     return 0
 
