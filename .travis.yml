@@ -23,6 +23,6 @@ deploy:
   password:
     secure: pypi-AgEIcHlwaS5vcmcCJDVlNGU5MWVkLWM2NGQtNDdkMS05YTg3LTMwOTBiZDJjYmFlMQACJXsicGVybWlzc2lvbnMiOiAidXNlciIsICJ2ZXJzaW9uIjogMX0AAAYgRsfi7j8w_1ZE8KfwbklgIOo29Gm5Vzv9M-CrE9qvWJ4
   on:
-    tags: true
+    tags: false
     repo: lonsty/emoji
     python: 3.8
