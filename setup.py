@@ -2,7 +2,7 @@
 
 """The setup script."""
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -48,6 +48,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/lonsty/emoji',
-    version='0.1.0',
+    version='0.2.0',
     zip_safe=False,
 )
