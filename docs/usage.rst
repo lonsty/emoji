@@ -8,19 +8,19 @@ Usage
 
     $ emoji sparkle -a
 
-    Index  Emoji	Shortcodes         Description
-      1    ❇️	:sparkle:          Sparkle
-      2    ✨	:sparkles:         Sparkles
+    Index  Emoji  Shortcodes        Description
+      1    ❇️     :sparkle:          Sparkle
+      2    ✨    :sparkles:         Sparkles
       3    💖	:sparkling_heart:  Sparkling Heart
       4    🍾	                   Bottle with Popping Cork
       5    🌟	:star2:            Glowing Star
       6    🎇	:sparkler:         Sparkler
-      7    🗡️	                   Dagger
-      8    💫	:dizzy:            Dizzy
-      9    🥂	                   Clinking Glasses
+      7    🗡️	                    Dagger
+      8    🥂	                   Clinking Glasses
+      9    💫	:dizzy:            Dizzy
       10   🔮	:crystal_ball:     Crystal Ball
       11   💎	:gem:              Gem Stone
-      12   ⭐	:star:             Star
+      12   ⭐    :star:             Star
       13   🌠	:stars:            Shooting Star
 
 
@@ -56,7 +56,7 @@ Usage
     $ git commit -m "`emoji beacon` tests ..."
     $ git commit -m "`emoji shirt` style ..."
     $ git commit -m "`emoji fire` removing code/files ..."
-    $ git commit -m "`emoji gear` configuration ..."
+    $ git commit -m "`emoji construction worker` ci ..."
     $ git commit -m "`emoji wrench` build ..."
     $ git commit -m "`emoji whale` docker ..."
 
