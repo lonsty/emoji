@@ -9,6 +9,7 @@ from urllib.parse import quote
 import requests
 from bs4 import BeautifulSoup
 
+HOST = 'https://emojipedia.org'
 SEARCH_API = 'https://emojipedia.org/search/?q={k}'
 TIMEOUT = 10
 Emoji = namedtuple('Emoji', 'emoji desc')
@@ -77,7 +78,7 @@ def search_emoji(keywords: Iterable) -> List[Emoji]:
     return emoji
 
 
-def search_emoji_limited(keywords: Iterable, limit: int) -> List[Emoji]:
+def search_emoji_limited(keywords: Iterable, limit: int=0) -> List[Emoji]:
     """
     Get limited emoji from search result.
 
@@ -93,7 +94,7 @@ def search_emoji_limited(keywords: Iterable, limit: int) -> List[Emoji]:
     return [NOT_FOUND]
 
 
-def search_emoji_first(keywords: Iterable) -> Emoji:
+def search_emoji_by_index(keywords: Iterable, index: int=1) -> Emoji:
     """
     Get the first emoji from result.
 
@@ -102,5 +103,5 @@ def search_emoji_first(keywords: Iterable) -> Emoji:
     """
     emoji = search_emoji(keywords)
     if emoji:
-        return emoji[0]
+        return emoji[index - 1]
     return NOT_FOUND
