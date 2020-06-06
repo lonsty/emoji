@@ -1,5 +1,5 @@
 Welcome to emoji2's documentation!
-======================================
+==================================
 
 .. toctree::
    :maxdepth: 2

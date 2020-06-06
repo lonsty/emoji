@@ -1,6 +1,6 @@
-=====
+======
 emoji2
-=====
+======
 
 
 .. image:: https://img.shields.io/pypi/v/emoji2.svg
@@ -27,6 +27,7 @@ Features
 --------
 
 * Search emoji by keywords in terminal.
+* Easily add emoji anywhere.
 
 Credits
 -------
