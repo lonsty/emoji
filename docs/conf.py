@@ -19,11 +19,9 @@
 #
 import os
 import sys
-
-import emoji
-
 sys.path.insert(0, os.path.abspath('..'))
 
+import emoji
 
 # -- General configuration ---------------------------------------------
 
