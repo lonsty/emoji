@@ -9,7 +9,7 @@ Usage
     $ emoji sparkle -a
 
     Index  Emoji  Shortcodes        Description
-      1    ❇️     :sparkle:          Sparkle
+      1    ❇️    :sparkle:          Sparkle
       2    ✨    :sparkles:         Sparkles
       3    💖	:sparkling_heart:  Sparkling Heart
       4    🍾	                   Bottle with Popping Cork
