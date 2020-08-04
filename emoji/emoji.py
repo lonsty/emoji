@@ -2,7 +2,7 @@
 import random
 import threading
 import time
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 from concurrent.futures import ThreadPoolExecutor, wait
 from functools import wraps
 from typing import Iterable, List
@@ -148,8 +148,9 @@ def get_emoji_shortcodes(emoji: Emoji) -> Emoji:
     soup = request_to_beautifulsoup(url=EMOJI_DETAIL_API.format(emoji=quote(emoji.emoji)))
     row = soup.find('table', class_='emoji-detail').find('td', text='Shortcodes')
     if row:
-        return Emoji(emoji=emoji.emoji, desc=emoji.desc,
-                     shortcodes=row.find_next_sibling().text)
+        # Remove repeated shortcodes
+        shortcodes = ', '.join(OrderedDict.fromkeys(row.find_next_sibling().text.split(', ')))
+        return Emoji(emoji=emoji.emoji, desc=emoji.desc, shortcodes=shortcodes)
     return emoji
 
 
